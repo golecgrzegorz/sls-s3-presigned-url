@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload file to S3 with Axios and presigned url</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+
+<input id="upload" type="file" multiple />
+
+<script>
+
+  const GET_PRESIGNED_URL_LAMBDA_ENDPOINT = '...';
+  const AUTH_TOKEN = '...';
+
+  (async () => {
+
+    async function fetchPresignedUrl(key) {
+
+      const method = 'put';
+      const url = new URL(
+          `/dev/s3/presigned-url/${method}`,
+          GET_PRESIGNED_URL_LAMBDA_ENDPOINT
+      );
+      url.searchParams.append('key', key);
+      url.searchParams.append('bucket', 'bucket-media-upload');
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${AUTH_TOKEN}`
+        }
+      });
+
+      return response?.data.url;
+    }
+
+    async function onUpload(event) {
+      const target = event.target;
+
+      for await (const file of target.files) {
+        const uploadUrl = await fetchPresignedUrl(file.name);
+        await axios.put(uploadUrl, file, {
+          headers: {
+            'Content-Type': file.type
+          }
+        });
+      }
+    }
+
+    const uploadElement = document.getElementById('upload');
+    uploadElement.addEventListener('change', onUpload, false);
+
+  })();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "sls-s3-presigned-url",
+  "version": "1.0.0",
+  "description": "Generate S3 presigned urls for object read and write",
+  "author": "Gregory Golec <grzegorz.golec.squareboxmobile@gmail.com>",
+  "main": "src/index.js",
+  "scripts": {
+    "deploy:prod": "SLS_DEBUG=* sls deploy -s prod -r eu-central-1",
+    "deploy:dev": "SLS_DEBUG=* sls deploy -s dev -r eu-central-1",
+    "info:dev": "sls info -s dev -r eu-central-1",
+    "info:prod": "sls info -s prod -r eu-central-1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0",
+    "@aws-sdk/s3-request-presigner": "^3.540.0"
+  }
+}
